@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+  <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: rgba(0, 0, 0, .87);
+      width: 100%;
+      height: 100vh;
+    }
+
+    .video-container {
+      width: 70%;
+      background-color: black;
+      padding: 0;
+
+    }
+
+    #video {
+      width: 100%;
+      height: 100%;
+    }
+
+    .bottom-nav {
+      background-color: white;
+      position: fixed;
+      bottom: 4%;
+      padding: 8px 20px;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    progress {
+      width: 1.8em;
+      height: 1.8em;
+      margin-right: 8px;
+      background: url("data:image/svg+xml,%3csvg viewBox='-5 -5 10 10' xmlns='http://www.w3.org/2000/svg'%3e%3cstyle%3esvg%7banimation:r 1.4s linear infinite%7d%40keyframes r%7bto%7btransform:rotate(270deg)%7d%7dcircle%7banimation:d 1.4s ease-in-out infinite%7d%40keyframes d%7b50%25%7btransform:rotate(135deg)%3bstroke-dashoffset:8%7dto%7btransform:rotate(450deg)%7dfrom%2cto%7bstroke-dashoffset:28%7d%7d%3c/style%3e%3ccircle fill='none' stroke-dasharray='30' stroke-dashoffset='8' stroke='%234285f4' r='4'/%3e%3c/svg%3e");
+    }
+
+    progress {
+      border: 0
+    }
+
+    progress::-moz-progress-bar {
+      background: none
+    }
+
+    progress::-webkit-progress-bar {
+      display: none
+    }
+
+    progress::-ms-fill {
+      animation-name: none
+    }
+
+    .center {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .show {
+      display: block;
+    }
+
+    .mdc-text-field {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="video-container"><video id="video" autoplay></video></div>
+  <span id="no-repeat"></span>
+  <div class="bottom-nav">
+    <div id="permision" class="show">
+      <button class="mdc-fab mdc-fab--mini mdc-fab--touch">
+        <div class="mdc-fab__ripple"></div>
+        <span class="material-icons material-symbols-outlined">present_to_all</span>
+        <div class="mdc-fab__touch"></div>
+      </button>
+    </div>
+    <div id="close-present" class="hidden">
+      <button class="mdc-fab mdc-fab--mini mdc-fab--touch" id="permision">
+        <div class="mdc-fab__ripple"></div>
+        <span class="material-icons material-symbols-outlined">pause_presentation</span>
+        <div class="mdc-fab__touch"></div>
+      </button>
+    </div>
+    <div>
+      <button class="mdc-fab mdc-fab--mini mdc-fab--touch" id="date">
+        <div class="mdc-fab__ripple"></div>
+        <span class="material-icons material-symbols-outlined">settings</span>
+        <div class="mdc-fab__touch"></div>
+      </button>
+    </div>
+  </div>
+
+  <aside class="mdc-snackbar">
+    <div class="mdc-snackbar__surface" role="status" aria-relevant="additions">
+      <div class="mdc-snackbar__label center aria-atomic=" false">
+        <progress id="snackbar-loading"></progress>
+        <span class="snackbar-text">Can't send photo. Retry in 5 seconds.</span>
+      </div>
+    </div>
+  </aside>
+  <div class="mdc-dialog dialog-simple">
+    <div class="mdc-dialog__container">
+      <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
+        aria-describedby="my-dialog-content">
+        <div class="mdc-dialog__content" id="my-dialog-content">
+          Discard draft?
+        </div>
+        <div class="mdc-dialog__actions">
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="cancel">
+            <div class="mdc-button__ripple"></div>
+            <span class="mdc-button__label">Cerrar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="mdc-dialog__scrim"></div>
+  </div>
+  <!-- <input type="time" id="tomorrow">
+  <input type="time" id="afternoon">
+  <input type="time" id="night"> -->
+
+  <div class="mdc-dialog dialog-setting">
+    <div class="mdc-dialog__container">
+      <div class="mdc-dialog__surface" role="alertdialog" aria-modal="true" aria-labelledby="my-dialog-title"
+        aria-describedby="my-dialog-content">
+        <!-- Title cannot contain leading whitespace due to mdc-typography-baseline-top() -->
+        <h2 class="mdc-dialog__title" id="my-dialog-title"><!--
+       -->Hora de captura de pantallas<!--
+     --></h2>
+        <div class="mdc-dialog__content" id="my-dialog-content">
+          <div>
+            <label class="mdc-text-field mdc-text-field--filled" id="tomorrow">
+              <span class="mdc-text-field__ripple"></span>
+              <span class="mdc-floating-label" id="my-label-id">Mañana</span>
+              <input class="mdc-text-field__input" type="time" aria-labelledby="my-label-id">
+              <span class="mdc-line-ripple"></span>
+            </label>
+          </div>
+          <div>
+            <label class="mdc-text-field mdc-text-field--filled" id="afternoon">
+              <span class="mdc-text-field__ripple"></span>
+              <span class="mdc-floating-label" id="my-label-id">Tarde</span>
+              <input class="mdc-text-field__input" type="time" aria-labelledby="my-label-id">
+              <span class="mdc-line-ripple"></span>
+            </label>
+          </div>
+          <div>
+            <label class="mdc-text-field mdc-text-field--filled" id="night">
+              <span class="mdc-text-field__ripple"></span>
+              <span class="mdc-floating-label" id="my-label-id">Noche</span>
+              <input class="mdc-text-field__input" type="time" aria-labelledby="my-label-id">
+              <span class="mdc-line-ripple"></span>
+            </label>
+          </div>
+        </div>
+        <div class="mdc-dialog__actions">
+          <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="close">
+            <div class="mdc-button__ripple"></div>
+            <span class="mdc-button__label">Cancelar</span>
+          </button>
+          <button type="button" class="mdc-button mdc-dialog__button" id="save-config" data-mdc-dialog-action="accept">
+            <div class="mdc-button__ripple"></div>
+            <span class="mdc-button__label">Guardar</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="mdc-dialog__scrim"></div>
+  </div>
+
+  <script type="module">
+
+    import Screenshot from './js/Screenshot.js'
+
+    import CustomDate from './js/CustomDate.js'
+
+    import Geolocation from './js/Geolocation.js'
+
+    import NotifyScreenshotService from './js/NotifyScreenshotService.js'
+
+
+    const $$ = (selector) => {
+      return document.querySelector(selector)
+    }
+
+    const screen = $$("#screen")
+    const btnPermision = $$("#permision")
+    const btnClosePersent = $$("#close-present")
+    const btnDate = $$("#date")
+    const btnSaveConfig = $$("#save-config")
+
+    const notifyScreenshotService = new NotifyScreenshotService()
+
+    const screenshot = new Screenshot($$('#video'))
+
+    const geolocation = new Geolocation()
+
+    let interval = null
+    const settingsKey = 'screenShotTime'
+
+    const snackbar = mdc.snackbar.MDCSnackbar.attachTo($$('.mdc-snackbar'));
+    const dialog = mdc.dialog.MDCDialog.attachTo($$('.dialog-simple'));
+    const dialogSetting = mdc.dialog.MDCDialog.attachTo($$('.dialog-setting'));
+    const tomorrowField = mdc.textField.MDCTextField.attachTo($$('#tomorrow'));
+    const afternoonField = mdc.textField.MDCTextField.attachTo($$('#afternoon'));
+    const nightField = mdc.textField.MDCTextField.attachTo($$('#night'));
+
+
+    screenshot.setOnendedCallback(() => {
+      clearInterval(interval)
+      showDialog({ message: `Has dejado de proyectar tu pantalla !` })
+      showPresentationButto()
+    })
+
+    //get config
+    let screenshotTime = () => {
+
+      const defaultScreenShotTime = { tomorrow: '08:05', afternoon: '12:05', night: '06:30' }
+
+      const config = localStorage.getItem(settingsKey)
+
+      if (!config) return defaultScreenShotTime
+
+      return JSON.parse(config)
+    }
+
+
+    const showPresentationButto = () => {
+        btnPermision.className =  btnPermision.className === 'hidden' ? 'show' : 'hidden' 
+        btnClosePersent.className =  btnClosePersent.className === 'show' ? 'hidden' :  'show'
+    }
+
+
+    const saveConfig = () => {
+
+      const config = screenshotTime()
+
+      config.tomorrow = tomorrowField.value
+      config.afternoon = afternoonField.value
+      config.night = nightField.value
+
+      localStorage.setItem(settingsKey, JSON.stringify(config))
+    }
+
+    const showSnackbar = ({ loading = true, message = 'Cargando', time = null }) => {
+      $$('.snackbar-text').innerHTML = message
+      $$('#snackbar-loading').className = loading ? 'show' : 'hidden'
+      snackbar.timeoutMs = time ?? -1
+      snackbar.open()
+
+    }
+
+    const showDialog = ({ message }) => {
+      $$('#my-dialog-content').innerHTML = message
+      dialog.open()
+
+    }
+
+    const screenshotTake = async () => {
+      const customDate = new CustomDate()
+
+      const take = Object.values(screenshotTime()).filter((hour) => hour === `${customDate.hour}:${customDate.minute}`)
+
+      console.log(take)
+  
+      if (take.length <= 0) return
+
+      const screenshotImg = await screenshot.take()
+
+      geolocation.getCurrentLocation({
+        callback: async (post) => {
+          try {
+            showSnackbar({ message: 'Capturando pantalla' })
+            await notifyScreenshotService.sendScreenShot({
+              screenshot: screenshotImg,
+              currentPositionUser: post
+            })
+            snackbar.close()
+          } catch (error) {
+            showDialog({ message: `Ha ocurrido un error al tomar la captura de pantalla hora ${take[0]}` })
+          }
+
+        },
+        errorCallback: ({ message }) => {
+          clearInterval(interval)
+          showDialog({ message: error })
+        }
+      })
+
+
+    }
+
+    // screen.addEventListener('click', () => {
+    //   screenshot.take()
+    // })
+
+    btnPermision.addEventListener('click', () => {
+      onMount()
+    })
+
+    btnDate.addEventListener('click', () => {
+      dialogSetting.open()
+    })
+
+    btnSaveConfig.addEventListener('click', () => {
+      saveConfig()
+    })
+
+    btnClosePersent.addEventListener('click', () => {
+      clearInterval(interval)
+      screenshot.stop()
+      showPresentationButto()
+    })
+
+
+    const automaticScreenShotTake = async () => {
+
+      try {
+        showSnackbar({ message: 'Esperando permisos' })
+        await screenshot.screenPermissions()
+        snackbar.close()
+        interval = setInterval(screenshotTake, 60000)
+        showPresentationButto()
+   
+      } catch (error) {
+        snackbar.close()
+        showDialog({ message: error })
+      }
+
+    }
+
+
+
+    const initConfig = () => {
+      tomorrowField.value = screenshotTime().tomorrow
+      afternoonField.value = screenshotTime().afternoon
+      nightField.value = screenshotTime().night
+    }
+
+    const onMount = () => {
+      initConfig()
+      geolocation.getCurrentLocation({
+        callback: () => {
+          automaticScreenShotTake()
+        },
+        errorCallback: ({ message }) => {
+          showDialog({ message })
+        }
+      })
+    }
+
+
+
+
+
+
+    window.onload = onMount
+
+
+
+
+
+
+
+
+
+
+
+  </script>
+</body>
+
+</html>
